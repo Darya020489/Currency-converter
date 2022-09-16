@@ -38,6 +38,7 @@ const selectFrom = createEl("select", "select select__from");
 selectFrom.id = "from";
 labelFrom.append(selectFrom);
 fillSelect(selectFrom);
+selectFrom.value = "USD";
 const changeCurrencyBtn = createEl("button", "change-currency__btn");
 const labelTo = createEl("label", "label label__to", "To");
 labelTo.setAttribute("for", "to");
@@ -45,6 +46,7 @@ const selectTo = createEl("select", "select select__finish");
 selectTo.id = "to";
 labelTo.append(selectTo);
 fillSelect(selectTo);
+selectTo.value = "BYN";
 const convertErrorContainer = createEl("div", "convert__error-container");
 const convertResultContainer = createEl("div", "convert__result-container");
 wrapConvert.append(labelAmount, labelFrom, changeCurrencyBtn, labelTo);
@@ -60,12 +62,11 @@ amountInput.focus();
 labelAmount.addEventListener("click", () => amountInput.focus());
 
 //обрабатывает клик на инпуте#############################################
-amountInput.addEventListener("keydown", (e) => {
+amountInput.addEventListener("input", (e) => {
   checkDataConvert();
 });
 
 //Проверяет данные, введенные в инпуте#########################################
-//?????????????????????????????????????????????????????1111111111111111111111111
 function checkDataConvert() {
   if (+amountInput.value) {
     console.log(+amountInput.value);
@@ -86,19 +87,15 @@ function checkDataConvert() {
 }
 
 //отправляет запрос#################################################
-function sendRequest() {
-  let convertRezObj;
+async function sendRequest() {
   let giveCurrency = selectFrom.value;
   let getCurrency = selectTo.value;
-  fetch(
+  let response = await fetch(
     `https://min-api.cryptocompare.com/data/price?fsym=${giveCurrency}&tsyms=${getCurrency}`
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      convertRezObj = data;
-      console.log(convertRezObj);
-      calcAmount(convertRezObj, getCurrency);
-    });
+  );
+  let convertRezObj = await response.json();
+  console.log(convertRezObj);
+  calcAmount(convertRezObj, getCurrency);
 }
 
 //рассчитывает значение#################################################
